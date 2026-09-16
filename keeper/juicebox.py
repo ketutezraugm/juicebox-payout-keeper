@@ -13,15 +13,17 @@ from typing import Any, Iterable, Sequence
 from eth_abi import decode as abi_decode
 from web3 import Web3
 
+# EIP-55 checksummed. Strict validators (KeeperHub's included) reject a wrong-cased
+# address outright, so tests/test_math.py asserts every entry here round-trips.
 JB = {
-    "projects": "0x0b538a02610d7d3cc91Ce2870f423e0a34D646Ad",
+    "projects": "0x0b538A02610d7d3Cc91Ce2870F423e0a34D646AD",
     "directory": "0x0bC9F153DEe4d3D474ce0903775b9b2AAae9AA41",
     "multi_terminal": "0xDB9644369c79C3633cDE70D2Df50d827D7dC7Dbc",
     "terminal_store": "0x6F6740ddA12033ca9fBAA56693194E38cfD36827",
-    "fund_access_limits": "0xF1E1df5BBa779E977a27CcC273847ab1346fCEb8",
-    "rulesets": "0xDA86EEDb67C6C9fB3E58FE83Efa28674D7C89826",
-    "splits": "0x9e834f2AE0970F8746E25FbA6d42FD90BB96630c",
-    "prices": "0xE712d14b04f1A1fE464be930e3ea72b9b0a141d7",
+    "fund_access_limits": "0xf1e1dF5bba779e977A27ccC273847Ab1346fCEb8",
+    "rulesets": "0xDA86EeDb67C6C9FB3E58FE83Efa28674D7C89826",
+    "splits": "0x9e834f2ae0970f8746E25Fba6D42FD90BB96630C",
+    "prices": "0xE712D14b04F1a1Fe464Be930e3ea72B9B0a141D7",
 }
 
 MULTICALL3 = "0xcA11bde05977b3631167028862bE2a173976CA11"

@@ -2,7 +2,12 @@
 
 import unittest
 
+from web3 import Web3
+
 from keeper.juicebox import (
+    JB,
+    MULTICALL3,
+    NATIVE_TOKEN,
     claimable_amount,
     from_terminal_token,
     releasable,
@@ -35,6 +40,16 @@ class ClaimableAmount(unittest.TestCase):
 
     def test_nothing_from_an_empty_treasury(self):
         self.assertEqual(claimable_amount(balance=0, payout_limit=100, used_payout_limit=0), 0)
+
+
+class Addresses(unittest.TestCase):
+    def test_every_address_is_eip55_checksummed(self):
+        # web3.py quietly re-derives the checksum from a lowercased address, so a
+        # wrong-cased constant works locally and is then rejected by any strict
+        # validator downstream. Catch it here instead.
+        for name, address in {**JB, "multicall3": MULTICALL3, "native": NATIVE_TOKEN}.items():
+            with self.subTest(contract=name):
+                self.assertEqual(address, Web3.to_checksum_address(address.lower()))
 
 
 class CurrencyConversion(unittest.TestCase):

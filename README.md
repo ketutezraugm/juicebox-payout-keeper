@@ -153,10 +153,12 @@ Honest list.
   as `other-terminal`, not evaluated. 4 such projects on Base.
 - **The deployed workflow hardcodes one project.** Generating a workflow per discovered project is
   mechanical but isn't wired up; today the agent composes them one at a time.
-- **The workflow's condition is `balance > 0`, not the full claimable calculation.** For project
-  #279 the payout limit is effectively unbounded, so the two agree. For a project whose treasury
-  exceeds its cycle allowance the workflow would request too much and the call would revert — the
-  dry run catches it, but the workflow should compute `min()` itself. The CLI already does.
+- **The workflow does not subtract the cycle's already-used allowance.** It releases
+  `min(treasury balance, cycle payout limit)`, which is correct unless the current cycle has
+  already paid out part of its allowance — then the request is too large and the call reverts
+  (caught before broadcast, but it should not get that far). The CLI computes the full
+  `min(balance, limit - used)`. The workflow deliberately does not: see the note on integer
+  precision below. 
 - **Non-native payout currencies are converted at read time**, so a price move between scan and
   execution shifts the amount. `minTokensPaidOut` is set to `0`; it should be a floor derived from
   the quote.
@@ -164,6 +166,26 @@ Honest list.
 - **Scanning is sequential per chain** and takes ~30s on a public RPC for mainnet. Fine for a keeper
   that runs hourly; slow if you're iterating.
 - **Only native-token payouts.** Projects paying out ERC-20s are out of scope.
+
+## A note on integer precision (platform finding)
+
+KeeperHub's `math/aggregate` action is bigint-safe for its aggregation, but its **post-operation
+arithmetic falls back to floating point**. Subtracting `0` from an exact integer was enough to
+lose the exact value:
+
+```
+input:  explicitValues 128000000000000000000000000, postOperation subtract, postOperand 0
+output: result "1.28e+26"   resultType "number"     (expected "128000000000000000000000000")
+```
+
+Reproduced on execution `4kbeva062g24fiheweqbs`. `"1.28e+26"` is not a valid `uint256` argument,
+and in a workflow that fed this into a transfer amount it would silently corrupt the value. The
+`min` operation is unaffected and correctly reports `resultType: "bigint"`.
+
+The keeper is built around this rather than through it: the releasable amount comes from `min`
+only, no post-operation arithmetic touches it, and the condition gate additionally refuses to
+proceed unless the amount's `resultType` is still `bigint`. A value that silently became a float
+stops the workflow instead of being sent on-chain.
 
 ## Notes
 
