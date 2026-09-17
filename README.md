@@ -151,6 +151,15 @@ Honest list.
 
 - **The scanner assumes `JBMultiTerminal`.** Projects on a custom terminal are counted and reported
   as `other-terminal`, not evaluated. 4 such projects on Base.
+- **The workflow only handles ETH-denominated payout limits.** It compares the treasury balance (in
+  wei) against the payout limit (in the limit's own currency) and takes the smaller. That is only
+  meaningful when the limit currency is ETH-equivalent — `61166` (the native token) or `1` (ETH as a
+  unit of account, which `JBPrices` resolves 1:1). For a genuinely foreign currency the operands are
+  different units and the comparison is meaningless, so the workflow must not be pointed at such a
+  project. Sepolia #46 is a live example (`currency 2`). **The CLI handles this correctly** — it
+  converts through `JBPrices` and reports a claimable amount that differs from the balance — but the
+  workflow does not, because the conversion needs the multiply/divide that loses integer precision
+  (see the note below).
 - **The deployed workflow hardcodes one project.** Generating a workflow per discovered project is
   mechanical but isn't wired up; today the agent composes them one at a time.
 - **The workflow does not subtract the cycle's already-used allowance.** It releases
