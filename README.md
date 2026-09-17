@@ -50,6 +50,18 @@ A keeper workflow, composed by an agent through KeeperHub's MCP server, released
 Project #279 is **not ours**. We released someone else's payouts, to their recipients, and paid
 nothing to do it. That is what a keeper is for.
 
+### And it runs unattended
+
+The workflow was left enabled on its hourly schedule. At **15:00:02 UTC on 17 Sep** it fired on its
+own, read project **#210**, found 0.084276 ETH releasable, and released it — no human present, no
+manual trigger:
+
+**[`0xcf03339b353134919c857f921f46d36bbc95998527b833a3e959391e44a83ffd`](https://sepolia.etherscan.io/tx/0xcf03339b353134919c857f921f46d36bbc95998527b833a3e959391e44a83ffd)**
+— block 11724459, receipt verified, 450,793 gas.
+
+We found out it had happened when the next scan showed that treasury already empty. That run is the
+keeper doing its job, rather than demonstrating it.
+
 ### It also refuses correctly
 
 Running the same workflow once the treasury was empty:
