@@ -50,6 +50,18 @@ A keeper workflow, composed by an agent through KeeperHub's MCP server, released
 Project #279 is **not ours**. We released someone else's payouts, to their recipients, and paid
 nothing to do it. That is what a keeper is for.
 
+### The run shown in the demo video
+
+The workflow in the video was composed by the agent on camera, then run:
+
+**[`0x3beb189ac8ead2c7b128a10aa3794fe2ac37d426c77897d12dc1e2fbd3d94fa3`](https://sepolia.etherscan.io/tx/0x3beb189ac8ead2c7b128a10aa3794fe2ac37d426c77897d12dc1e2fbd3d94fa3)**
+
+- Sepolia project **#57**, treasury `0.022 ETH` → **`0`**
+- Split across the project's two configured recipients: 90% to `0x80581C6e…C0D6`, 10% to `0x0724d0eb…262b`
+- Block 11724782, `receiptStatus: success`, verified on-chain, 424,667 gas, 21 seconds
+
+Running it again immediately afterwards produced the refusal below, on the same workflow.
+
 ### And it runs unattended
 
 The workflow was left enabled on its hourly schedule. At **15:00:02 UTC on 17 Sep** it fired on its
