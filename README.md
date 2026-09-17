@@ -163,6 +163,11 @@ Honest list.
 
 - **The scanner assumes `JBMultiTerminal`.** Projects on a custom terminal are counted and reported
   as `other-terminal`, not evaluated. 4 such projects on Base.
+- **The workflow reads `payoutLimits[0]` blindly.** A project can configure several payout limits,
+  one per currency, and the workflow always takes the first. Sepolia #57 is a live example with two
+  (6.9 ETH at currency `1`, 4.2 ETH at currency `61166`); taking `[0]` is safe there only because
+  `JBPrices` resolves currency `1` to the native token 1:1. It should select the row whose currency
+  it can actually price, the way the CLI does.
 - **The workflow only handles ETH-denominated payout limits.** It compares the treasury balance (in
   wei) against the payout limit (in the limit's own currency) and takes the smaller. That is only
   meaningful when the limit currency is ETH-equivalent — `61166` (the native token) or `1` (ETH as a
